@@ -21,3 +21,10 @@ A simple memory patcher which enables the internal developer console in ironman/
   * e.g. `vcvarsall.bat x64`
 * Navigate to project folder
 * Run `MSBuild EU4ConsolePatcher.sln /t:Rebuild /p:Configuration=Release`
+
+## Usage
+* Start Europa Universalis 4
+* Start a new ironman game or load a previously saved game
+* As soon as the game has loaded, start `EU4ConsolePatcher.exe`
+* Open the ingame console with `^` and enter your commands, e.g. `help`
+* Have fun
