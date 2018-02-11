@@ -33,6 +33,12 @@
     <ClInclude Include="MemoryManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="structs.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="defines.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

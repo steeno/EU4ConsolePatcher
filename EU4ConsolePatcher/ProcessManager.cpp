@@ -23,13 +23,13 @@ bool ProcessManager::FindProcess(const wchar_t* processName, PROCESSENTRY32& pe3
 bool ProcessManager::UpdateProcessList() {
 	HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (processSnapshot == INVALID_HANDLE_VALUE) {
-		std::wcerr << "CreateToolhelp32Snapshot failed: " << GetLastError() << std::endl;
+		DEBUG(L"CreateToolhelp32Snapshot failed: " << GetLastError());
 		return false;
 	}
 	PROCESSENTRY32 pe32;
 	pe32.dwSize = sizeof(PROCESSENTRY32);
 	if (!Process32First(processSnapshot, &pe32)) {
-		std::wcerr << "Process32First failed: " << GetLastError() << std::endl;
+		DEBUG(L"Process32First failed: " << GetLastError());
 		return false;
 	}
 	do {

@@ -26,13 +26,13 @@ bool ModuleManager::FindModule(const wchar_t* moduleName, MODULEENTRY32& me32) {
 bool ModuleManager::UpdateModuleList() {
 	HANDLE moduleSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, this->processId);
 	if (moduleSnapshot == INVALID_HANDLE_VALUE) {
-		std::wcerr << "CreateToolhelp32Snapshot failed: " << GetLastError() << std::endl;
+		DEBUG(L"CreateToolhelp32Snapshot failed: " << GetLastError());
 		return false;
 	}
 	MODULEENTRY32 me32;
 	me32.dwSize = sizeof(MODULEENTRY32);
 	if (!Module32First(moduleSnapshot, &me32)) {
-		std::wcerr << "Module32First failed: " << GetLastError() << std::endl;
+		DEBUG(L"Module32First failed: " << GetLastError());
 		CloseHandle(moduleSnapshot);
 		return false;
 	}

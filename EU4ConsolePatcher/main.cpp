@@ -2,12 +2,9 @@
 #include "ProcessManager.h"
 #include "ModuleManager.h"
 #include "MemoryManager.h"
+#include "structs.h"
+#include "defines.h"
 
-/* v1.23.0
->eu4.exe
-00E7AAB1: 74->EB
-00E7AC80: 74->EB
-*/
 /* v1.24.1 
 >eu4.exe
 018677C1 | E977C1 | 74 18                    | je eu4.18677DB                          |
@@ -23,64 +20,55 @@
 01867992 | E97992 | C7 05 00 00 00 00 39 05  | mov dword ptr ds:[0],539                |
 0186799C | E9799C | 8B 75 08                 | mov esi,dword ptr ss:[ebp+8]            |
 */
-#define OFFSET_A 0xE977C1
-#define OFFSET_B 0xE97990
-#define OPCODE_JE 0x74
-#define OPCODE_JMP 0xEB
-
-#define STATUS_ERROR -1;
-#define STATUS_SUCCESS 0;
-
-#define TARGET_PROCESS_NAME L"eu4.exe"
 
 int main() {
 	ProcessManager processManager;
 	PROCESSENTRY32 pe32;
-	pe32.dwSize = sizeof(PROCESSENTRY32);
+	std::wcout << L"Trying to find process " << TARGET_PROCESS_NAME << std::endl;
 	if (!processManager.FindProcess(TARGET_PROCESS_NAME, pe32)) {
-		std::wcerr << L"Process: " << TARGET_PROCESS_NAME << L" could not be found." << std::endl;
+		std::wcout << L"Process could not be found, is it already running?" << std::endl;
 		getchar();
 		return STATUS_ERROR;
 	}
-	std::wcout << L"PID: " << pe32.th32ProcessID << std::endl << \
-		L"PNAME: " << pe32.szExeFile << std::endl;
+	std::wcout << L"Process found" << std::endl;
 
 	ModuleManager moduleManager(pe32.th32ProcessID);
 	MODULEENTRY32 me32;
-	me32.dwSize = sizeof(MODULEENTRY32);
-	if (!moduleManager.FindModule(pe32.szExeFile, me32)) {
-		std::wcerr << L"Module: " << pe32.szExeFile << L" could not be found." << std::endl;
+	std::wcout << L"Trying to find module " << TARGET_MODULE_NAME << std::endl;
+	if (!moduleManager.FindModule(TARGET_MODULE_NAME, me32)) {
+		std::wcout << L"Module could not be found, has the target app completely loaded?" << std::endl;
 		getchar();
 		return STATUS_ERROR;
 	}
-	std::wcout << L"MNAME: " << me32.szModule << std::endl << \
-		L"MBASE: " << std::hex << me32.modBaseAddr << std::endl << \
-		L"MSIZE: " << me32.modBaseSize << std::endl;
-
+	std::wcout << L"Module found" << std::endl;
+	
+	std::vector<patchInfo_t> patches;
+	patchInfo_t patch;
+	patch.baseAddress = (DWORD)me32.modBaseAddr;
+	patch.offset = 0xE977C1;
+	patch.opcodes = new BYTE {
+		OPCODE_JMP
+	};
+	patch.length = 1;
+	patches.push_back(patch);
+	patch.baseAddress = (DWORD)me32.modBaseAddr;
+	patch.offset = 0xE97990;
+	patch.opcodes = new BYTE {
+		OPCODE_JMP
+	};
+	patch.length = 1;
+	patches.push_back(patch);
+	
 	MemoryManager memoryManager(pe32.th32ProcessID);
-	const DWORD baseAddress = (DWORD)me32.modBaseAddr + OFFSET_A;
-	const BYTE buffer[] = {
-		OPCODE_JMP
-	};
-	if (!memoryManager.Patch(baseAddress, buffer, sizeof(buffer))) {
-		std::wcerr << L"Address: " << std::hex << baseAddress << L" could not be patched." << std::endl;
-		getchar();
-		return STATUS_ERROR;
+	for (auto p = patches.cbegin(); p != patches.cend(); ++p) {
+		std::wcout << L"Trying to apply patch" << std::endl;
+		if (!memoryManager.Patch(*p)) {
+			std::wcout << L"Patch could not be applied" << std::endl;
+			getchar();
+			return STATUS_ERROR;
+		}
+		std::wcout << L"Patch applied successfully" << std::endl;
 	}
-	std::wcout << L"Address: " << std::hex << baseAddress << L" patched successfully." << std::endl;
-
-	const DWORD baseAddress2 = (DWORD)me32.modBaseAddr + OFFSET_B;
-	const BYTE buffer2[] = {
-		OPCODE_JMP
-	};
-	if (!memoryManager.Patch(baseAddress2, buffer2, sizeof(buffer2))) {
-		std::wcerr << L"Address: " << std::hex << baseAddress2 << L" could not be patched." << std::endl;
-		getchar();
-		return STATUS_ERROR;
-	}
-	std::wcout << L"Address: " << std::hex << baseAddress2 << L" patched successfully." << std::endl;
-
-	getchar();
 	return STATUS_SUCCESS;
 }
 

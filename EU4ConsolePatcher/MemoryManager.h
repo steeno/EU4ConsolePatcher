@@ -1,10 +1,12 @@
 #pragma once
+#include "structs.h"
+
 class MemoryManager
 {
 public:
 	MemoryManager(const DWORD& processId);
 	~MemoryManager();
-	bool Patch(const DWORD& baseAddress, const BYTE* buffer, const SIZE_T& length);
+	bool Patch(const patchInfo_t& patchInfo);
 private:
 	DWORD processId;
 };

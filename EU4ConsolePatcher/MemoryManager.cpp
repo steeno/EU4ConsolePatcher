@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MemoryManager.h"
+#include "structs.h"
 
 MemoryManager::MemoryManager(const DWORD& processId)
 {
@@ -10,50 +11,36 @@ MemoryManager::~MemoryManager()
 {
 }
 
-bool MemoryManager::Patch(const DWORD& baseAddress, const BYTE* buffer, const SIZE_T& length) {
+bool MemoryManager::Patch(const patchInfo_t& patchInfo) {
 	HANDLE processHandle = OpenProcess(PROCESS_VM_WRITE | PROCESS_VM_READ | PROCESS_VM_OPERATION, false, this->processId);
 	if (processHandle == NULL) {
-		std::wcerr << L"OpenProcess failed: " << GetLastError() << std::endl;
+		DEBUG(L"OpenProcess failed: " << GetLastError());
 		return false;
 	}
 	DWORD oldProtect;
-	if (!VirtualProtectEx(processHandle, (void*)baseAddress, length, PAGE_EXECUTE_READWRITE, &oldProtect)) {
-		std::wcerr << L"VirtualProtectEx failed: " << GetLastError() << std::endl;
+	LPVOID address = (void*)(patchInfo.baseAddress + patchInfo.offset);
+	DEBUG(L"address: " << std::hex << address);
+	if (!VirtualProtectEx(processHandle, address, patchInfo.length, PAGE_EXECUTE_READWRITE, &oldProtect)) {
+		DEBUG(L"VirtualProtectEx failed: " << GetLastError());
 		CloseHandle(processHandle);
 		return false;
 	}
-	std::wcout << L"oldProtect: " << std::hex << oldProtect << std::endl;
-	BYTE* oldBuffer = new BYTE[length];
-	SIZE_T bytesRead;
-	if (!ReadProcessMemory(processHandle, (const void*)baseAddress, (void*)oldBuffer, length, &bytesRead)) {
-		std::wcerr << L"ReadProcessMemory failed: " << GetLastError() << std::endl;
-		delete[] oldBuffer;
-		CloseHandle(processHandle);
-		return false;
-	}
-	std::wcout << L"bytesRead: " << std::dec << bytesRead << std::endl << \
-		L"oldBuffer: " << std::hex << oldBuffer[0] << std::endl;
-	delete[] oldBuffer;
-	/*
-	TODO
-	- compare oldBuffer with expected opcodes
-	- compare bytesRead with length
-	*/
+	DEBUG(L"oldProtect: " << std::hex << oldProtect);
 	SIZE_T bytesWritten;
-	if (!WriteProcessMemory(processHandle, (void*)baseAddress, buffer, length, &bytesWritten)) {
-		std::wcerr << L"WriteProcessMemory failed: " << GetLastError() << std::endl;
+	if (!WriteProcessMemory(processHandle, address, patchInfo.opcodes, patchInfo.length, &bytesWritten)) {
+		DEBUG(L"WriteProcessMemory failed: " << GetLastError());
 		CloseHandle(processHandle);
 		return false;
 	}
-	std::wcout << L"bytesWritten: " << std::dec << bytesWritten << std::endl << \
-		L"buffer: " << std::hex << buffer[0] << std::endl;
-	/* 
-	TODO 
-	- compare bytesWritten with length
-	*/
+	DEBUG(L"bytesWritten: " << bytesWritten);
+	if (bytesWritten != patchInfo.length) {
+		DEBUG(L"bytesWritten does not match patch length");
+		CloseHandle(processHandle);
+		return false;
+	}
 	DWORD oldProtect2;
-	if (!VirtualProtectEx(processHandle, (void*)baseAddress, length, oldProtect, &oldProtect2)) {
-		std::wcerr << L"VirtualProtectEx failed: " << GetLastError() << std::endl;
+	if (!VirtualProtectEx(processHandle, address, patchInfo.length, oldProtect, &oldProtect2)) {
+		DEBUG(L"VirtualProtectEx failed: " << GetLastError());
 		CloseHandle(processHandle);
 		return false;
 	}
