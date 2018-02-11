@@ -28,4 +28,4 @@ A simple memory patcher which enables the internal developer console in ironman/
 * As soon as the game has loaded, start `EU4ConsolePatcher.exe`
 * Open the ingame console with `^` and enter your commands, e.g. `help`
 * Have fun
-* Sample video: https://youtu.be/mVjUmoZwalo
+* Sample video: https://youtu.be/BMrR6EO4OAw
