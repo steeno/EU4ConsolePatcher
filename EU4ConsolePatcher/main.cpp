@@ -23,6 +23,14 @@
 
 int main() {
 	ProcessManager processManager;
+	std::wcout << L"Trying to enable debug privileges for the current process" << std::endl;
+	if (!processManager.GrantDebugPrivileges(GetCurrentProcess())) {
+		std::wcout << L"Could not enable debug privileges" << std::endl;
+		getchar();
+		return STATUS_ERROR;
+	}
+	std::wcout << L"Debug privileges enabled" << std::endl;
+
 	PROCESSENTRY32 pe32;
 	std::wcout << L"Trying to find process " << TARGET_PROCESS_NAME << std::endl;
 	if (!processManager.FindProcess(TARGET_PROCESS_NAME, pe32)) {
@@ -41,7 +49,7 @@ int main() {
 		return STATUS_ERROR;
 	}
 	std::wcout << L"Module found" << std::endl;
-	
+
 	std::vector<patchInfo_t> patches;
 	patchInfo_t patch;
 	patch.baseAddress = (DWORD)me32.modBaseAddr;

@@ -15,6 +15,7 @@ bool ModuleManager::FindModule(const wchar_t* moduleName, MODULEENTRY32& me32) {
 		return false;
 	}
 	for (auto it = this->moduleList.cbegin(); it != this->moduleList.cend(); ++it) {
+		DEBUG(L"module name: " << it->szModule);
 		if (!lstrcmp(moduleName, it->szModule)) {
 			me32 = *it;
 			return true;
