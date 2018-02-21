@@ -29,7 +29,3 @@ A simple memory patcher which enables the internal developer console in ironman/
 * Open the ingame console with `^` and enter your commands, e.g. `help`
 * Have fun
 * Sample video: https://youtu.be/BMrR6EO4OAw
-
-## Issues
-* v1.0
-  * If you get an error like "msvcp140.dll not found" while trying to use the binary release you would need to install the "Visual C++ Redistributable Package for VS2017" first, which can be found [here](https://go.microsoft.com/fwlink/?LinkId=746572). Otherwise you could use the `-static` prefixed version.
