@@ -6,7 +6,7 @@ A simple memory patcher which enables the internal developer console in ironman/
 * Use pattern scanning instead of fixed RVA's
 
 ## Latest supported EU4 version
-* 1.24.1 (Japan Patch)
+* 1.25.0
 
 ## Build instructions
 ### Windows (ui)
