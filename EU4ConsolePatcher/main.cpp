@@ -53,14 +53,14 @@ int main() {
 	std::vector<patchInfo_t> patches;
 	patchInfo_t patch;
 	patch.baseAddress = (DWORD)me32.modBaseAddr;
-	patch.offset = 0xE977C1;
+	patch.offset = 0x00EC7F41;
 	patch.opcodes = new BYTE {
 		OPCODE_JMP
 	};
 	patch.length = 1;
 	patches.push_back(patch);
 	patch.baseAddress = (DWORD)me32.modBaseAddr;
-	patch.offset = 0xE97990;
+	patch.offset = 0x00EC8110;
 	patch.opcodes = new BYTE {
 		OPCODE_JMP
 	};
