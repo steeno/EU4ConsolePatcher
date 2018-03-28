@@ -11,16 +11,17 @@ A simple memory patcher which enables the internal developer console in ironman/
 ## Build instructions
 ### Windows (ui)
 * Clone repository
-* Open EU4ConsolePatcher.sln in Visual Studio
-* Choose either Debug or Release build
-* Choose either x86 or x64 build
-* Build the project
+* Open `EU4ConsolePatcher.sln` in your Visual Studio IDE
+* Choose either `Debug` or `Release` configuration
+* Choose either `x86` or `x64` platform 
+* Run build
 ### Windows (cmdline)
 * Start cmdline
 * Execute `vcvarsall.bat` [arch]
   * e.g. `vcvarsall.bat x64`
-* Navigate to project folder
-* Run `MSBuild EU4ConsolePatcher.sln /t:Rebuild /p:Configuration=Release`
+  * `vcvarsall.bat` is f.e. located at `X:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\` (VS Community 2017)
+* Navigate to EU4ConsolerPatcher project folder
+* Run `nmake release` or `nmake debug`
 
 ## Usage
 * Start Europa Universalis 4
