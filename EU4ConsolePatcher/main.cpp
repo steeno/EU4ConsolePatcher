@@ -27,7 +27,7 @@ int main() {
 	if (!processManager.GrantDebugPrivileges(GetCurrentProcess())) {
 		std::wcout << L"Could not enable debug privileges" << std::endl;
 		getchar();
-		return STATUS_ERROR;
+		return EXIT_FAILURE;
 	}
 	std::wcout << L"Debug privileges enabled" << std::endl;
 
@@ -36,7 +36,7 @@ int main() {
 	if (!processManager.FindProcess(TARGET_PROCESS_NAME, pe32)) {
 		std::wcout << L"Process could not be found, is it already running?" << std::endl;
 		getchar();
-		return STATUS_ERROR;
+		return EXIT_FAILURE;
 	}
 	std::wcout << L"Process found" << std::endl;
 
@@ -46,7 +46,7 @@ int main() {
 	if (!moduleManager.FindModule(TARGET_MODULE_NAME, me32)) {
 		std::wcout << L"Module could not be found, has the target app completely loaded?" << std::endl;
 		getchar();
-		return STATUS_ERROR;
+		return EXIT_FAILURE;
 	}
 	std::wcout << L"Module found" << std::endl;
 
@@ -73,10 +73,10 @@ int main() {
 		if (!memoryManager.Patch(*p)) {
 			std::wcout << L"Patch could not be applied" << std::endl;
 			getchar();
-			return STATUS_ERROR;
+			return EXIT_FAILURE;
 		}
 		std::wcout << L"Patch applied successfully" << std::endl;
 	}
-	return STATUS_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
