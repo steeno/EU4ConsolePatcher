@@ -2,11 +2,10 @@
 A simple memory patcher which enables the internal developer console in ironman/multiplayer mode
 
 ## Todo
-* Rework Memory/Patch class
-* Use pattern scanning instead of fixed RVA's
+* Rework Memory/Patch classes
 
 ## Latest supported EU4 version
-* 1.25.0
+* 1.25.1 (should work with newer versions too)
 
 ## Build instructions
 ### Windows (ui)
