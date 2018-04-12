@@ -11,7 +11,8 @@ MemoryManager::~MemoryManager()
 {
 }
 
-bool MemoryManager::Patch(const patchInfo_t& patchInfo) {
+bool MemoryManager::Patch(const patchInfo_t& patchInfo) 
+{
 	// PROCESS_QUERY_INFORMATION required for VirtualQueryEx
 	// PROCESS_VM_OPERATION required for VirtualProtectEx
 	// PROCESS_VM_WRITE required for WriteProcessMemory
@@ -69,7 +70,8 @@ bool MemoryManager::Patch(const patchInfo_t& patchInfo) {
 	return true;
 }
 
-bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, const SIZE_T& size, DWORD& offset) {
+bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, const SIZE_T& size, DWORD& offset) 
+{
 	// PROCESS_QUERY_INFORMATION required for VirtualQueryEx
 	// PROCESS_VM_OPERATION required for VirtualProtectEx
 	// PROCESS_VM_READ required for ReadProcessMemory
@@ -117,7 +119,7 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 		return false;
 	}
 	// Search local memory for pattern
-	for (auto tmp = 0; tmp < size; ++tmp) {
+	for (SIZE_T tmp = 0; tmp < size; ++tmp) {
 		if (this->CompareData(buffer + tmp, pattern)) {
 			offset = tmp;
 			DEBUG(L"offset: 0x" << std::hex << offset);
@@ -139,7 +141,8 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 	return true;	
 }
 
-bool MemoryManager::CompareData(const BYTE* data, const wchar_t* pattern) {
+bool MemoryManager::CompareData(const BYTE* data, const wchar_t* pattern) 
+{
 	for (auto i = 0; pattern[i]; ++i) {
 		if (pattern[i] != L'?' && pattern[i] != data[i]) {
 			return false;

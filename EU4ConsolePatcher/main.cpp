@@ -21,7 +21,8 @@
 0186799C | E9799C | 8B 75 08                 | mov esi,dword ptr ss:[ebp+8]            |
 */
 
-int main() {
+int main() 
+{
 	ProcessManager processManager;
 	std::wcout << L"Trying to enable debug privileges for the current process" << std::endl;
 	if (!processManager.GrantDebugPrivileges(GetCurrentProcess())) {

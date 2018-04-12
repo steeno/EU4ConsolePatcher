@@ -7,7 +7,8 @@ ProcessManager::ProcessManager() {
 ProcessManager::~ProcessManager() {
 }
 
-bool ProcessManager::FindProcess(const wchar_t* processName, PROCESSENTRY32& pe32) {
+bool ProcessManager::FindProcess(const wchar_t* processName, PROCESSENTRY32& pe32) 
+{
 	if (!this->UpdateProcessList()) {
 		return false;
 	}
@@ -21,7 +22,8 @@ bool ProcessManager::FindProcess(const wchar_t* processName, PROCESSENTRY32& pe3
 	return false;
 }
 
-bool ProcessManager::GrantDebugPrivileges(const HANDLE& processHandle) {
+bool ProcessManager::GrantDebugPrivileges(const HANDLE& processHandle) 
+{
 	HANDLE accessTokenHandle;
 	if (!OpenProcessToken(processHandle, TOKEN_ADJUST_PRIVILEGES, &accessTokenHandle)) {
 		DEBUG(L"OpenProcessToken failed: " << GetLastError());
@@ -46,7 +48,8 @@ bool ProcessManager::GrantDebugPrivileges(const HANDLE& processHandle) {
 	return true;
 }
 
-bool ProcessManager::UpdateProcessList() {
+bool ProcessManager::UpdateProcessList() 
+{
 	HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (processSnapshot == INVALID_HANDLE_VALUE) {
 		DEBUG(L"CreateToolhelp32Snapshot failed: " << GetLastError());

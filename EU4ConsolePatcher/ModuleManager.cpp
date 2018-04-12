@@ -10,7 +10,8 @@ ModuleManager::~ModuleManager()
 {
 }
 
-bool ModuleManager::FindModule(const wchar_t* moduleName, MODULEENTRY32& me32) {
+bool ModuleManager::FindModule(const wchar_t* moduleName, MODULEENTRY32& me32) 
+{
 	if (!this->UpdateModuleList()) {
 		return false;
 	}
@@ -24,7 +25,8 @@ bool ModuleManager::FindModule(const wchar_t* moduleName, MODULEENTRY32& me32) {
 	return false;
 }
 
-bool ModuleManager::UpdateModuleList() {
+bool ModuleManager::UpdateModuleList() 
+{
 	HANDLE moduleSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, this->processId);
 	if (moduleSnapshot == INVALID_HANDLE_VALUE) {
 		DEBUG(L"CreateToolhelp32Snapshot failed: " << GetLastError());
