@@ -1,5 +1,5 @@
 # EU4ConsolePatcher
-A simple memory patcher which enables the internal developer console in ironman/multiplayer mode
+A simple memory patcher which enables the internal developer console in ironman mode
 
 ## Todo
 * Rework Memory/Patch classes
