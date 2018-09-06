@@ -89,6 +89,10 @@ int main()
 		}
 		std::wcout << L"Patch applied successfully" << std::endl;
 	}
+
+#ifdef _DEBUG
+	getchar();
+#endif
 	return EXIT_SUCCESS;
 }
 

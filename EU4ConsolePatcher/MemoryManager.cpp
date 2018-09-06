@@ -13,6 +13,7 @@ MemoryManager::~MemoryManager()
 
 bool MemoryManager::Patch(const patchInfo_t& patchInfo) 
 {
+	DEBUG(L"Trying to patch: " << std::hex << patchInfo.address << ":" << patchInfo.length);
 	// PROCESS_QUERY_INFORMATION required for VirtualQueryEx
 	// PROCESS_VM_OPERATION required for VirtualProtectEx
 	// PROCESS_VM_WRITE required for WriteProcessMemory
@@ -118,6 +119,7 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 		CloseHandle(processHandle);
 		return false;
 	}
+	offset = NULL;
 	// Search local memory for pattern
 	for (SIZE_T tmp = 0; tmp < size; ++tmp) {
 		if (this->CompareData(buffer + tmp, pattern)) {
@@ -125,6 +127,12 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 			DEBUG(L"offset: 0x" << std::hex << offset);
 			break;
 		}
+	}
+	if (offset == NULL) {
+		DEBUG(L"Pattern not found");
+		free(buffer);
+		CloseHandle(processHandle);
+		return false;
 	}
 	free(buffer);
 	// Reset memory access rights
