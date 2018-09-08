@@ -8,7 +8,7 @@ A simple memory patcher which enables the internal developer console in ironman 
 * Rework Memory/Patch classes
 
 ## Latest supported EU4 version
-* 1.26.0 (should work with newer versions too)
+* 1.26.0 (Mughals/Dharma) (should work with newer versions too)
 
 ## Build instructions
 ### Windows (ui)
