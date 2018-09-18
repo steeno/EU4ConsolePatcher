@@ -19,6 +19,8 @@ bool ModuleManager::FindModule(const wchar_t* moduleName, MODULEENTRY32& me32)
 		DEBUG(L"module name: " << it->szModule);
 		if (!lstrcmp(moduleName, it->szModule)) {
 			me32 = *it;
+			DEBUG(L"modBaseAddress: 0x" << std::hex << me32.modBaseAddr);
+			DEBUG(L"modBaseSize: 0x" << std::hex << me32.modBaseSize);
 			return true;
 		}
 	}

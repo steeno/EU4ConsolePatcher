@@ -19,7 +19,7 @@ bool MemoryManager::Patch(const patchInfo_t& patchInfo)
 	// PROCESS_VM_WRITE required for WriteProcessMemory
 	HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE, false, this->processId);
 	if (processHandle == NULL) {
-		DEBUG(L"OpenProcess failed: " << GetLastError());
+		DEBUG(L"OpenProcess failed: " << std::dec << GetLastError());
 		return false;
 	}
 	DEBUG(L"processHandle: 0x" << std::hex << processHandle);
@@ -27,17 +27,26 @@ bool MemoryManager::Patch(const patchInfo_t& patchInfo)
 	// Especially the region size
 	MEMORY_BASIC_INFORMATION mbi;
 	if (VirtualQueryEx(processHandle, (LPCVOID)patchInfo.address, &mbi, sizeof(MEMORY_BASIC_INFORMATION)) == 0) {
-		DEBUG(L"VirtualQueryEx failed: " << GetLastError());
+		DEBUG(L"VirtualQueryEx failed: " << std::dec << GetLastError());
 		CloseHandle(processHandle);
 		return false;
 	}
+	DEBUG(L"BaseAddress: 0x" << std::hex << mbi.BaseAddress);
 	DEBUG(L"RegionSize: 0x" << std::hex << mbi.RegionSize);
+	// Get system information, like the page size
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+	DEBUG(L"PageSize: 0x" << std::hex << si.dwPageSize);
 	// Change memory access rights of involved regions
 	std::unordered_map<BYTE*, DWORD> oldProtections;
 	DWORD oldProtect;
-	for (BYTE* baseAddress = (BYTE*)mbi.BaseAddress; baseAddress < (patchInfo.address + patchInfo.length); baseAddress += mbi.RegionSize) {
-		if (!VirtualProtectEx(processHandle, baseAddress, mbi.RegionSize, PAGE_EXECUTE_READWRITE, &oldProtect)) {
-			DEBUG(L"VirtualProtectEx failed: " << GetLastError());
+	for (BYTE* baseAddress = (BYTE*)mbi.BaseAddress; baseAddress < (patchInfo.address + patchInfo.length); baseAddress += si.dwPageSize) {
+		if (!VirtualProtectEx(processHandle, baseAddress, si.dwPageSize, PAGE_EXECUTE_READWRITE, &oldProtect)) {
+			DEBUG(L"VirtualProtectEx failed: " << std::dec << GetLastError());
+			DEBUG(L"baseAddress: 0x" << std::hex << baseAddress);
+			DEBUG(L"RegionSize: 0x" << std::hex << mbi.RegionSize);
+			DEBUG(L"newProtect: 0x" << std::hex << PAGE_EXECUTE_READWRITE);
+			DEBUG(L"oldProtect: 0x" << std::hex << oldProtect);
 			CloseHandle(processHandle);
 			return false;
 		}
@@ -47,7 +56,7 @@ bool MemoryManager::Patch(const patchInfo_t& patchInfo)
 	// Patch target memory
 	SIZE_T bytesWritten;
 	if (!WriteProcessMemory(processHandle, patchInfo.address, patchInfo.opcodes, patchInfo.length, &bytesWritten)) {
-		DEBUG(L"WriteProcessMemory failed: " << GetLastError());
+		DEBUG(L"WriteProcessMemory failed: " << std::dec << GetLastError());
 		CloseHandle(processHandle);
 		return false;
 	}
@@ -60,8 +69,12 @@ bool MemoryManager::Patch(const patchInfo_t& patchInfo)
 	// Reset memory access rights
 	DWORD oldProtect2;
 	for (const auto& oldProtection : oldProtections) {
-		if (!VirtualProtectEx(processHandle, oldProtection.first, mbi.RegionSize, oldProtection.second, &oldProtect2)) {
-			DEBUG(L"VirtualProtectEx failed: " << GetLastError());
+		if (!VirtualProtectEx(processHandle, oldProtection.first, si.dwPageSize, oldProtection.second, &oldProtect2)) {
+			DEBUG(L"VirtualProtectEx failed: " << std::dec << GetLastError());
+			DEBUG(L"baseAddress: 0x" << std::hex << oldProtection.first);
+			DEBUG(L"RegionSize: 0x" << std::hex << mbi.RegionSize);
+			DEBUG(L"newProtect: 0x" << std::hex << oldProtection.second);
+			DEBUG(L"oldProtect: 0x" << std::hex << oldProtect2);
 			CloseHandle(processHandle);
 			return false;
 		}
@@ -78,7 +91,7 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 	// PROCESS_VM_READ required for ReadProcessMemory
 	HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_READ, false, this->processId);
 	if (processHandle == NULL) {
-		DEBUG(L"OpenProcess failed: " << GetLastError());
+		DEBUG(L"OpenProcess failed: " << std::dec << GetLastError());
 		return false;
 	}
 	DEBUG(L"processHandle: 0x" << std::hex << processHandle);
@@ -86,17 +99,26 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 	// Especially the region size
 	MEMORY_BASIC_INFORMATION mbi;
 	if (VirtualQueryEx(processHandle, (LPCVOID)address, &mbi, sizeof(MEMORY_BASIC_INFORMATION)) == 0) {
-		DEBUG(L"VirtualQueryEx failed: " << GetLastError());
+		DEBUG(L"VirtualQueryEx failed: " << std::dec << GetLastError());
 		CloseHandle(processHandle);
 		return false;
 	}
+	DEBUG(L"BaseAddress: 0x" << std::hex << mbi.BaseAddress);
 	DEBUG(L"RegionSize: 0x" << std::hex << mbi.RegionSize);
+	// Get system information, like the page size
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+	DEBUG(L"PageSize: 0x" << std::hex << si.dwPageSize);
 	// Change memory access rights of involved regions
 	std::unordered_map<BYTE*, DWORD> oldProtections;
 	DWORD oldProtect;
-	for (auto baseAddress = (BYTE*)mbi.BaseAddress; baseAddress < (address + size); baseAddress += mbi.RegionSize) {
-		if (!VirtualProtectEx(processHandle, baseAddress, mbi.RegionSize, PAGE_EXECUTE_READWRITE, &oldProtect)) {
-			DEBUG(L"VirtualProtectEx failed: " << GetLastError());
+	for (auto baseAddress = (BYTE*)mbi.BaseAddress; baseAddress < (address + size); baseAddress += si.dwPageSize) {
+		if (!VirtualProtectEx(processHandle, baseAddress, si.dwPageSize, PAGE_EXECUTE_READWRITE, &oldProtect)) {
+			DEBUG(L"VirtualProtectEx failed: " << std::dec << GetLastError());
+			DEBUG(L"baseAddress: 0x" << std::hex << baseAddress);
+			DEBUG(L"RegionSize: 0x" << std::hex << mbi.RegionSize);
+			DEBUG(L"newProtect: 0x" << std::hex << PAGE_EXECUTE_READWRITE);
+			DEBUG(L"oldProtect: 0x" << std::hex << oldProtect);
 			CloseHandle(processHandle);
 			return false;
 		}
@@ -107,7 +129,7 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 	BYTE* buffer = (BYTE*)malloc(size);
 	SIZE_T bytesRead = 0;
 	if (!ReadProcessMemory(processHandle, (LPCVOID)address, (LPVOID)buffer, size, &bytesRead)) {
-		DEBUG(L"ReadProcessMemory failed: " << GetLastError());
+		DEBUG(L"ReadProcessMemory failed: " << std::dec << GetLastError());
 		free(buffer);
 		CloseHandle(processHandle);
 		return false;
@@ -121,6 +143,7 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 	}
 	offset = NULL;
 	// Search local memory for pattern
+	DEBUG(L"pattern: " << pattern);
 	for (SIZE_T tmp = 0; tmp < size; ++tmp) {
 		if (this->CompareData(buffer + tmp, pattern)) {
 			offset = tmp;
@@ -138,8 +161,12 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 	// Reset memory access rights
 	DWORD oldProtect2;
 	for (const auto& oldProtection : oldProtections) {
-		if (!VirtualProtectEx(processHandle, oldProtection.first, mbi.RegionSize, oldProtection.second, &oldProtect2)) {
-			DEBUG(L"VirtualProtectEx failed: " << GetLastError());
+		if (!VirtualProtectEx(processHandle, oldProtection.first, si.dwPageSize, oldProtection.second, &oldProtect2)) {
+			DEBUG(L"VirtualProtectEx failed: " << std::dec << GetLastError());
+			DEBUG(L"baseAddress: 0x" << std::hex << oldProtection.first);
+			DEBUG(L"RegionSize: 0x" << std::hex << mbi.RegionSize);
+			DEBUG(L"newProtect: 0x" << std::hex << oldProtection.second);
+			DEBUG(L"oldProtect: 0x" << std::hex << oldProtect2);
 			CloseHandle(processHandle);
 			return false;
 		}

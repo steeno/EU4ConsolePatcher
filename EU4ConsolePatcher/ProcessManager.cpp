@@ -16,6 +16,8 @@ bool ProcessManager::FindProcess(const wchar_t* processName, PROCESSENTRY32& pe3
 		DEBUG(L"process name: " << it->szExeFile);
 		if (!lstrcmp(processName, it->szExeFile)) {
 			pe32 = *it;
+			DEBUG(L"th32ProcessID: 0x" << std::hex << pe32.th32ProcessID);
+			DEBUG(L"th32ModuleID: 0x" << std::hex << pe32.th32ModuleID);
 			return true;
 		}
 	}
