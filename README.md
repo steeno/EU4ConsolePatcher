@@ -2,13 +2,15 @@
 A simple memory patcher which enables the internal developer console in ironman mode
 
 ## Download
-* Latest pre-compiled binary can be found [here](https://github.com/steeno/EU4ConsolePatcher/releases)
+* Latest pre-compiled binary releases can be found in the [release secion](https://github.com/steeno/EU4ConsolePatcher/releases)
 
 ## Todo
 * Rework Memory/Patch classes
 
 ## Latest supported EU4 version
-* 1.26.0 (should work with newer versions too)
+* 1.26.0 (Mughals/Dharma) 
+* 1.26.1 Opt-in Hotfix
+* Should work with newer versions too
 
 ## Build instructions
 ### Windows (ui)
