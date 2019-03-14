@@ -6,17 +6,23 @@ A simple memory patcher which enables the internal developer console in ironman 
 
 ## Todo
 * Rework Memory/Patch classes
+* Auto patch when started before EU4
+* Add CK2 / HOI4 support
 
 ## Latest supported EU4 version
-* 1.28.2 (Spain)
+* 1.28.3 (Spain)
 * Should work with newer versions too
 
 ## Build instructions
+### Requirements
+* Windows XP or later (tested only on Windows 10)
+* Windows 7.1A SDK or above (tested only with Windows 10 SDK)
+* VC++ 2015.3, v140_xp or above (tested only with v140/v141)
 ### Windows (ui)
 * Clone repository
 * Open `EU4ConsolePatcher.sln` in your Visual Studio IDE
 * Choose either `Debug` or `Release` configuration
-* Choose either `x86` or `x64` platform 
+* Choose either `x86` or `x64` platform
 * Run build
 ### Windows (cmdline)
 * Start cmdline
