@@ -2,7 +2,7 @@
 A simple memory patcher which enables the internal developer console in ironman mode
 
 ## Download
-* Latest pre-compiled binary releases can be found in the [release secion](https://github.com/steeno/EU4ConsolePatcher/releases)
+* Latest pre-compiled binary releases can be found in the [release section](https://github.com/steeno/EU4ConsolePatcher/releases)
 
 ## Todo
 * Rework Memory/Patch classes
