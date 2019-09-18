@@ -84,7 +84,7 @@ bool MemoryManager::Patch(const patchInfo_t& patchInfo)
 	return true;
 }
 
-bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, const SIZE_T& size, DWORD& offset) 
+bool MemoryManager::FindPattern(const wchar_t* pattern, const wchar_t* signature, const BYTE* address, const SIZE_T& size, DWORD& offset) 
 {
 	// PROCESS_QUERY_INFORMATION required for VirtualQueryEx
 	// PROCESS_VM_OPERATION required for VirtualProtectEx
@@ -127,6 +127,11 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 	}
 	// Map target memory into local memory
 	BYTE* buffer = (BYTE*)malloc(size);
+	if (buffer == NULL) {
+		DEBUG(L"malloc failed: " << std::dec << errno);
+		CloseHandle(processHandle);
+		return false;
+	}
 	SIZE_T bytesRead = 0;
 	if (!ReadProcessMemory(processHandle, (LPCVOID)address, (LPVOID)buffer, size, &bytesRead)) {
 		DEBUG(L"ReadProcessMemory failed: " << std::dec << GetLastError());
@@ -145,8 +150,8 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 	// Search local memory for pattern
 	DEBUG(L"pattern: " << pattern);
 	for (SIZE_T tmp = 0; tmp < size; ++tmp) {
-		if (this->CompareData(buffer + tmp, pattern)) {
-			offset = tmp;
+		if (this->CompareData(buffer + tmp, pattern, signature)) {
+			offset = (DWORD)tmp;
 			DEBUG(L"offset: 0x" << std::hex << offset);
 			break;
 		}
@@ -176,10 +181,10 @@ bool MemoryManager::FindPattern(const wchar_t* pattern, const BYTE* address, con
 	return true;	
 }
 
-bool MemoryManager::CompareData(const BYTE* data, const wchar_t* pattern) 
+bool MemoryManager::CompareData(const BYTE* data, const wchar_t* pattern, const wchar_t* signature) 
 {
-	for (auto i = 0; pattern[i]; ++i) {
-		if (pattern[i] != L'?' && pattern[i] != data[i]) {
+	for (auto i = 0; signature[i]; ++i) {
+		if (signature[i] != L'?' && pattern[i] != data[i]) {
 			return false;
 		}
 	}
