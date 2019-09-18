@@ -10,7 +10,7 @@ A simple memory patcher which enables the internal developer console in ironman 
 * Add CK2 / HOI4 support
 
 ## Latest supported EU4 version
-* 1.28.3 (Spain)
+* 1.29.0 (Manchu)
 * Should work with newer versions too
 
 ## Build instructions
