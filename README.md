@@ -3,11 +3,12 @@ A simple memory patcher which enables the internal developer console in ironman 
 
 ## Download
 * Latest pre-compiled binary releases can be found in the [release section](https://github.com/steeno/EU4ConsolePatcher/releases)
+* Basic cheatengine script which does the same as this simple tool can also be found in the [release section](https://github.com/steeno/EU4ConsolePatcher/releases)
 
 ## Todo
-* Rework Memory/Patch classes
-* Auto patch when started before EU4
-* Add CK2 / HOI4 support
+* Rework everything
+* Add support to wait for target process
+* Add CK2 / HOI4 / IR / Stellaris support 
 
 ## Latest supported EU4 version
 * 1.29.0 (Manchu)
