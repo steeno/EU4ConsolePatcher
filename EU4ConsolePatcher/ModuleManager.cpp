@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ModuleManager.h"
+#include "defines.h"
 
 ModuleManager::ModuleManager(const DWORD& processId)
 {
@@ -29,11 +30,32 @@ bool ModuleManager::FindModule(const wchar_t* moduleName, MODULEENTRY32& me32)
 
 bool ModuleManager::UpdateModuleList() 
 {
-	HANDLE moduleSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, this->processId);
-	if (moduleSnapshot == INVALID_HANDLE_VALUE) {
-		DEBUG(L"CreateToolhelp32Snapshot failed: " << GetLastError());
+	HANDLE moduleSnapshot;
+	DWORD lastError;
+	BYTE retries = 0;
+
+	while (true) {
+		moduleSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, this->processId);
+		if (moduleSnapshot != INVALID_HANDLE_VALUE) {
+			break;
+		}
+		// If CTH32S failed with ERROR_PARTIAL_COPY error, try again
+		lastError = GetLastError();
+		if (lastError == ERROR_PARTIAL_COPY) {
+			++retries;
+			// If CTH32S failed to often with ERROR_PARTIAL_COPY error, cancel
+			if (retries > MAX_MODULE_SNAPSHOT_RETRY_COUNT) {
+				DEBUG(L"CreateToolhelp32Snapshot failed: " << lastError);
+				return false;
+			}
+			Sleep(1000);
+			continue;
+		}
+		// IF CTH32S failed with another error, cancel
+		DEBUG(L"CreateToolhelp32Snapshot failed: " << lastError);
 		return false;
 	}
+
 	MODULEENTRY32 me32;
 	me32.dwSize = sizeof(MODULEENTRY32);
 	if (!Module32First(moduleSnapshot, &me32)) {
