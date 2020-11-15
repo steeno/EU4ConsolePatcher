@@ -8,3 +8,5 @@
 
 #define TARGET_PROCESS_NAME L"eu4.exe"
 #define TARGET_MODULE_NAME L"eu4.exe"
+
+#define MAX_MODULE_SNAPSHOT_RETRY_COUNT 10
