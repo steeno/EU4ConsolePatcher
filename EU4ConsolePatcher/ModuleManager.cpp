@@ -11,17 +11,17 @@ ModuleManager::~ModuleManager()
 {
 }
 
-bool ModuleManager::FindModule(const wchar_t* moduleName, MODULEENTRY32& me32) 
+bool ModuleManager::FindModule(const std::string& moduleName, MODULEENTRY32& me32) 
 {
 	if (!this->UpdateModuleList()) {
 		return false;
 	}
 	for (auto it = this->moduleList.cbegin(); it != this->moduleList.cend(); ++it) {
-		DEBUG(L"module name: " << it->szModule);
-		if (!lstrcmp(moduleName, it->szModule)) {
+		DEBUG("module name: " << it->szModule);
+		if (!moduleName.compare(it->szModule)) {
 			me32 = *it;
-			DEBUG(L"modBaseAddress: 0x" << std::hex << me32.modBaseAddr);
-			DEBUG(L"modBaseSize: 0x" << std::hex << me32.modBaseSize);
+			DEBUG("modBaseAddress: 0x" << std::hex << (DWORD64)me32.modBaseAddr);
+			DEBUG("modBaseSize: 0x" << std::hex << me32.modBaseSize);
 			return true;
 		}
 	}
@@ -45,21 +45,21 @@ bool ModuleManager::UpdateModuleList()
 			++retries;
 			// If CTH32S failed to often with ERROR_PARTIAL_COPY error, cancel
 			if (retries > MAX_MODULE_SNAPSHOT_RETRY_COUNT) {
-				DEBUG(L"CreateToolhelp32Snapshot failed: " << lastError);
+				DEBUG("CreateToolhelp32Snapshot failed: " << lastError);
 				return false;
 			}
 			Sleep(1000);
 			continue;
 		}
 		// IF CTH32S failed with another error, cancel
-		DEBUG(L"CreateToolhelp32Snapshot failed: " << lastError);
+		DEBUG("CreateToolhelp32Snapshot failed: " << lastError);
 		return false;
 	}
 
 	MODULEENTRY32 me32;
 	me32.dwSize = sizeof(MODULEENTRY32);
 	if (!Module32First(moduleSnapshot, &me32)) {
-		DEBUG(L"Module32First failed: " << GetLastError());
+		DEBUG("Module32First failed: " << GetLastError());
 		CloseHandle(moduleSnapshot);
 		return false;
 	}

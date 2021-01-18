@@ -1,12 +1,10 @@
 #pragma once
 #define OPCODE_JMP 0xEB
 
-#define MEMORY_PATTERN_A L"\x74\x5F\xC6\x44\x24\x28\x00\x41\xB8\x35\x00\x00\x00\x48\x8D\x00\x00\x00\x00\x00\x48\x8D\x4C\x24\x30\xE8\x00\x00\x00\x00\x0F\xB6\x44\x24\x28\x88\x06\x48\x8D\x4E\x08\x48\xC7\x41\x18\x0F\x00\x00\x00\x4C\x89\x61\x10"
-#define MEMORY_SIGNATURE_A L"xxxxxxxxxxxxxxx?????xxxxxx????xxxxxxxxxxxxxxxxxxxxxxx"
-#define MEMORY_PATTERN_B L"\x74\x0B\xC7\x04\x25\x00\x00\x00\x00\x39\x05\x00\x00\x0F\xB6\x45\xE0\x88\x06\x48\x8D\x4E\x08\x48\x8D\x55\xE8\xE8\x00\x00\x00\x00\x90\x48\x8D\x4D\xE8\xE8"
-#define MEMORY_SIGNATURE_B L"xxxxxxxxxxxxxxxxxxxxxxxxxxxx????xxxxxx"
+#define MEMORY_PATTERN_A "74 ?? C6 44 24 28 00 41 B8 35 00 00 00"
+#define MEMORY_PATTERN_B "74 ?? C7 04 25 00 00 00 00 39 05 00 00"
 
-#define TARGET_PROCESS_NAME L"eu4.exe"
-#define TARGET_MODULE_NAME L"eu4.exe"
+#define TARGET_PROCESS_NAME "eu4.exe"
+#define TARGET_MODULE_NAME "eu4.exe"
 
 #define MAX_MODULE_SNAPSHOT_RETRY_COUNT 10
