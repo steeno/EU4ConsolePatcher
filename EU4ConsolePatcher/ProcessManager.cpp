@@ -7,17 +7,17 @@ ProcessManager::ProcessManager() {
 ProcessManager::~ProcessManager() {
 }
 
-bool ProcessManager::FindProcess(const wchar_t* processName, PROCESSENTRY32& pe32) 
+bool ProcessManager::FindProcess(const std::string& processName, PROCESSENTRY32& pe32) 
 {
 	if (!this->UpdateProcessList()) {
 		return false;
 	}
 	for (auto it = this->processList.cbegin(); it != this->processList.cend(); ++it) {
-		DEBUG(L"process name: " << it->szExeFile);
-		if (!lstrcmp(processName, it->szExeFile)) {
+		DEBUG("process name: " << it->szExeFile);
+		if (!processName.compare(it->szExeFile)) {
 			pe32 = *it;
-			DEBUG(L"th32ProcessID: 0x" << std::hex << pe32.th32ProcessID);
-			DEBUG(L"th32ModuleID: 0x" << std::hex << pe32.th32ModuleID);
+			DEBUG("th32ProcessID: 0x" << std::hex << pe32.th32ProcessID);
+			DEBUG("th32ModuleID: 0x" << std::hex << pe32.th32ModuleID);
 			return true;
 		}
 	}
@@ -28,12 +28,12 @@ bool ProcessManager::GrantDebugPrivileges(const HANDLE& processHandle)
 {
 	HANDLE accessTokenHandle;
 	if (!OpenProcessToken(processHandle, TOKEN_ADJUST_PRIVILEGES, &accessTokenHandle)) {
-		DEBUG(L"OpenProcessToken failed: " << GetLastError());
+		DEBUG("OpenProcessToken failed: " << GetLastError());
 		return false;
 	}
 	LUID luid;
 	if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luid)) {
-		DEBUG(L"LookupPrivilegeValue failed: " << GetLastError());
+		DEBUG("LookupPrivilegeValue failed: " << GetLastError());
 		CloseHandle(accessTokenHandle);
 		return false;
 	}
@@ -42,7 +42,7 @@ bool ProcessManager::GrantDebugPrivileges(const HANDLE& processHandle)
 	tokenPrivileges.Privileges[0].Luid = luid;
 	tokenPrivileges.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 	if (!AdjustTokenPrivileges(accessTokenHandle, false, &tokenPrivileges, sizeof(TOKEN_PRIVILEGES), NULL, NULL)) {
-		DEBUG(L"AdjustTokenProvileges failed: " << GetLastError());
+		DEBUG("AdjustTokenProvileges failed: " << GetLastError());
 		CloseHandle(accessTokenHandle);
 		return false;
 	}
@@ -54,13 +54,13 @@ bool ProcessManager::UpdateProcessList()
 {
 	HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (processSnapshot == INVALID_HANDLE_VALUE) {
-		DEBUG(L"CreateToolhelp32Snapshot failed: " << GetLastError());
+		DEBUG("CreateToolhelp32Snapshot failed: " << GetLastError());
 		return false;
 	}
 	PROCESSENTRY32 pe32;
 	pe32.dwSize = sizeof(PROCESSENTRY32);
 	if (!Process32First(processSnapshot, &pe32)) {
-		DEBUG(L"Process32First failed: " << GetLastError());
+		DEBUG("Process32First failed: " << GetLastError());
 		return false;
 	}
 	do {
