@@ -40,9 +40,8 @@ int main()
 	patchInfo_t patch;
 	std::cout << "Trying to find memory patterns" << std::endl;
 	if (!memoryManager.FindPattern(MEMORY_PATTERN_A, me32.modBaseAddr, me32.modBaseSize, offset)) {
-		std::cout << "First memory pattern could not be found" << std::endl;
-		system("pause");
-		return EXIT_FAILURE;
+		std::cout << "First memory pattern could not be found, using fallback offset" << std::endl;
+		offset = PATCH_A_FALLBACK;
 	}
 	std::cout << "First memory pattern found" << std::endl;
 	patch.address = me32.modBaseAddr + offset;
@@ -52,9 +51,8 @@ int main()
 	patch.length = 1;
 	patches.push_back(patch);
 	if (!memoryManager.FindPattern(MEMORY_PATTERN_B, me32.modBaseAddr, me32.modBaseSize, offset)) {
-		std::cout << "Second memory pattern could not be found" << std::endl;
-		system("pause");
-		return EXIT_FAILURE;
+		std::cout << "Second memory pattern could not be found, using fallback offset" << std::endl;
+		offset = PATCH_B_FALLBACK;
 	}
 	std::cout << "Second memory pattern found" << std::endl;
 	patch.address = me32.modBaseAddr + offset;
