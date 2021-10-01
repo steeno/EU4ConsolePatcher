@@ -8,10 +8,10 @@ A simple memory patcher which enables the internal developer console in ironman 
 ## Todo
 * Rework everything
 * Add support to wait for target process
-* Add CK2 / HOI4 / IR / Stellaris support 
+* Add CK2 / CK3 / HOI4 / I:R / Stellaris support 
 
 ## Latest supported EU4 version
-* 1.29.0 (Manchu)
+* 1.31.6.0 (Majapahit)
 * Should work with newer versions too
 
 ## Build instructions
@@ -34,7 +34,7 @@ A simple memory patcher which enables the internal developer console in ironman 
 * Run `nmake release` or `nmake debug`
 
 ## Usage
-* Start Europa Universalis 4
+* Start Europa Universalis IV
 * Start a new ironman game or load a previously saved game
 * As soon as the game has loaded, start `EU4ConsolePatcher.exe`
 * Open the ingame console with `^` and enter your commands, e.g. `help`
