@@ -11,14 +11,12 @@ A simple memory patcher which enables the internal developer console in ironman 
 * Add CK2 / CK3 / HOI4 / I:R / Stellaris support 
 
 ## Latest supported EU4 version
-* 1.31.6.0 (Majapahit)
+* 1.37.0.0 (Inca)
 * Should work with newer versions too
 
 ## Build instructions
 ### Requirements
-* Windows XP or later (tested only on Windows 10)
-* Windows 7.1A SDK or above (tested only with Windows 10 SDK)
-* VC++ 2015.3, v140_xp or above (tested only with v140/v141)
+* Windows 10 or later
 ### Windows (ui)
 * Clone repository
 * Open `EU4ConsolePatcher.sln` in your Visual Studio IDE
